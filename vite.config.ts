@@ -41,6 +41,7 @@ const config = async (): Promise<UserConfigExport> => {
 					"react/jsx-runtime",
 					"react-dom",
 					"tailwindcss",
+					"react-querybuilder",
 				],
 				output: {
 					globals: {
@@ -48,6 +49,7 @@ const config = async (): Promise<UserConfigExport> => {
 						"react/jsx-runtime": "react/jsx-runtime",
 						"react-dom": "ReactDOM",
 						tailwindcss: "tailwindcss",
+						"react-querybuilder": "ReactQueryBuilder",
 					},
 					exports: "named",
 				},

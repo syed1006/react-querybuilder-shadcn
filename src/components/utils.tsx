@@ -7,13 +7,16 @@ export { isOptionGroupArray };
 
 export const toOptions = (arr?: OptionList): React.JSX.Element[] | null =>
 	isOptionGroupArray(arr)
-		? arr.map((og) => (
-				<SelectGroup key={og.label}>
+		? arr.map((og, idx) => (
+				<SelectGroup key={`${og.label}-${idx}`}>
 					<SelectLabel>{og.label}</SelectLabel>
-					{og.options.map((opt) => (
+					{og.options.map((opt, indx) => (
 						<>
 							{opt.name && (
-								<SelectItem key={opt.name} value={opt.name}>
+								<SelectItem
+									key={`${opt.name}-${indx}`}
+									value={opt.name}
+								>
 									{opt.label}
 								</SelectItem>
 							)}
@@ -22,9 +25,9 @@ export const toOptions = (arr?: OptionList): React.JSX.Element[] | null =>
 				</SelectGroup>
 		  ))
 		: Array.isArray(arr)
-		? arr.map((opt) => (
+		? arr.map((opt, idx) => (
 				/* @ts-ignore */
-				<SelectItem key={opt.label} value={opt.value}>
+				<SelectItem key={`${opt.label}-${idx}`} value={opt.value}>
 					{/* @ts-ignore */}
 					{opt.label}
 				</SelectItem>

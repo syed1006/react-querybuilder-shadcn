@@ -31,20 +31,20 @@ export function DatePicker({
 	const [date, setDate] = React.useState<Date>(initialDate);
 
 	const handleDateChange = (date: any) => {
-		const selectedDate = date ? date.toDate() : null;
-		setDate(selectedDate);
-		if (onChange) onChange(selectedDate);
+		setDate(date);
+		if (onChange) onChange(date);
 	};
 
 	return (
 		<Popover>
-			<PopoverTrigger className={className} disabled={disabled} asChild>
+			<PopoverTrigger className={className} asChild>
 				<Button
 					variant={"outline"}
 					className={cn(
 						"w-[280px] justify-start text-left font-normal",
 						!date && "text-muted-foreground"
 					)}
+					disabled={disabled}
 				>
 					<CalendarIcon className="mr-2 h-4 w-4" />
 					{date ? (

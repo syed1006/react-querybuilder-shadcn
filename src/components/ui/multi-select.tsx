@@ -51,6 +51,26 @@ const multiSelectVariants = cva(
 	}
 );
 
+export interface MultiselectOption {
+	/** The text to display for the option. */
+	label: string;
+	/** The unique value associated with the option. */
+	value: string;
+	/** Optional icon component to display alongside the option. */
+	icon?: React.ComponentType<{ className?: string }>;
+}
+
+export interface GroupMultiselectOption {
+	label: string;
+	options: Array<MultiselectOption>;
+}
+
+function isGroupOption(
+	option: MultiselectOption | GroupMultiselectOption
+): option is GroupMultiselectOption {
+	return (option as GroupMultiselectOption).options !== undefined;
+}
+
 /**
  * Props for MultiSelect component
  */
@@ -61,14 +81,7 @@ interface MultiSelectProps
 	 * An array of option objects to be displayed in the multi-select component.
 	 * Each option object has a label, value, and an optional icon.
 	 */
-	options: {
-		/** The text to display for the option. */
-		label: string;
-		/** The unique value associated with the option. */
-		value: string;
-		/** Optional icon component to display alongside the option. */
-		icon?: React.ComponentType<{ className?: string }>;
-	}[];
+	options: Array<MultiselectOption | GroupMultiselectOption>;
 
 	/**
 	 * Callback function triggered when the selected values change.
@@ -133,6 +146,7 @@ export const MultiSelect = React.forwardRef<
 			modalPopover = false,
 			asChild = false,
 			className,
+			disabled,
 			...props
 		},
 		ref
@@ -181,11 +195,36 @@ export const MultiSelect = React.forwardRef<
 			onValueChange(newSelectedValues);
 		};
 
+		const getOptionsLength = (): number => {
+			let length = 0;
+			for (let i = 0; i < options.length; i++) {
+				const option = options[i];
+				if (isGroupOption(option)) {
+					length += option.options.length;
+				} else {
+					length++;
+				}
+			}
+			return length;
+		};
+
 		const toggleAll = () => {
-			if (selectedValues.length === options.length) {
+			if (selectedValues.length === getOptionsLength()) {
 				handleClear();
 			} else {
-				const allValues = options.map((option) => option.value);
+				const allValues = [];
+				for (let i = 0; i < options.length; i++) {
+					const option = options[i];
+					if (isGroupOption(option)) {
+						for (let j = 0; j < option.options.length; j++) {
+							const nestedOption = option.options[j];
+							allValues.push(nestedOption.value);
+						}
+					} else {
+						allValues.push(option.value);
+					}
+				}
+
 				setSelectedValues(allValues);
 				onValueChange(allValues);
 			}
@@ -206,6 +245,7 @@ export const MultiSelect = React.forwardRef<
 							"flex w-full p-1 rounded-md border min-h-10 h-auto items-center justify-between bg-inherit hover:bg-inherit",
 							className
 						)}
+						disabled={disabled}
 					>
 						{selectedValues.length > 0 ? (
 							<div className="flex justify-between items-center w-full">
@@ -213,10 +253,6 @@ export const MultiSelect = React.forwardRef<
 									{selectedValues
 										.slice(0, maxCount)
 										.map((value) => {
-											const option = options.find(
-												(o) => o.value === value
-											);
-											const IconComponent = option?.icon;
 											return (
 												<Badge
 													key={value}
@@ -232,17 +268,15 @@ export const MultiSelect = React.forwardRef<
 														animationDuration: `${animation}s`,
 													}}
 												>
-													{IconComponent && (
-														<IconComponent className="h-4 w-4 mr-2" />
-													)}
-													{option?.label}
-													<XCircle
-														className="ml-2 h-4 w-4 cursor-pointer"
+													{value}
+													<span
 														onClick={(event) => {
 															event.stopPropagation();
 															toggleOption(value);
 														}}
-													/>
+													>
+														<XCircle className="ml-2 h-4 w-4 cursor-pointer" />
+													</span>
 												</Badge>
 											);
 										})}
@@ -262,24 +296,27 @@ export const MultiSelect = React.forwardRef<
 											{`+ ${
 												selectedValues.length - maxCount
 											} more`}
-											<XCircle
-												className="ml-2 h-4 w-4 cursor-pointer"
+											<span
 												onClick={(event) => {
 													event.stopPropagation();
 													clearExtraOptions();
 												}}
-											/>
+											>
+												<XCircle className="ml-2 h-4 w-4 cursor-pointer" />
+											</span>
 										</Badge>
 									)}
 								</div>
 								<div className="flex items-center justify-between">
-									<XIcon
-										className="h-4 mx-2 cursor-pointer text-muted-foreground"
+									<span
 										onClick={(event) => {
 											event.stopPropagation();
 											handleClear();
 										}}
-									/>
+									>
+										<XIcon className="h-4 mx-2 cursor-pointer text-muted-foreground" />
+									</span>
+
 									<Separator
 										orientation="vertical"
 										className="flex min-h-6 h-full"
@@ -319,7 +356,7 @@ export const MultiSelect = React.forwardRef<
 										className={cn(
 											"mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
 											selectedValues.length ===
-												options.length
+												getOptionsLength()
 												? "bg-primary text-primary-foreground"
 												: "opacity-50 [&_svg]:invisible"
 										)}
@@ -329,6 +366,38 @@ export const MultiSelect = React.forwardRef<
 									<span>(Select All)</span>
 								</CommandItem>
 								{options.map((option) => {
+									if (isGroupOption(option)) {
+										return option.options.map((opt) => {
+											const isSelected =
+												selectedValues.includes(
+													opt.value
+												);
+											return (
+												<CommandItem
+													key={opt.value}
+													onSelect={() =>
+														toggleOption(opt.value)
+													}
+													className="cursor-pointer"
+												>
+													<div
+														className={cn(
+															"mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
+															isSelected
+																? "bg-primary text-primary-foreground"
+																: "opacity-50 [&_svg]:invisible"
+														)}
+													>
+														<CheckIcon className="h-4 w-4" />
+													</div>
+													{opt.icon && (
+														<opt.icon className="mr-2 h-4 w-4 text-muted-foreground" />
+													)}
+													<span>{opt.label}</span>
+												</CommandItem>
+											);
+										});
+									}
 									const isSelected = selectedValues.includes(
 										option.value
 									);

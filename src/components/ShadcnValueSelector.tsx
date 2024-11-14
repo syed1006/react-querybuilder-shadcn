@@ -4,7 +4,11 @@ import type { VersatileSelectorProps } from "react-querybuilder";
 import { useValueSelector } from "react-querybuilder";
 import { toOptions } from "./utils";
 import { Select, SelectContent, SelectTrigger, SelectValue } from "./ui/select";
-import { MultiSelect } from "./ui/multi-select";
+import {
+	GroupMultiselectOption,
+	MultiSelect,
+	MultiselectOption,
+} from "./ui/multi-select";
 
 export type ShadcnValueSelectorProps = VersatileSelectorProps &
 	Omit<ComponentPropsWithoutRef<typeof Select>, "onChange" | "defaultValue">;
@@ -39,21 +43,46 @@ export const ShadcnValueSelector = ({
 		value,
 	});
 
-	function mapToMultiSelectOptions(items: any[]) {
-		return items.map((item) => ({
-			label: item.label || item.name || item.title || "Unknown",
-			value: item.value || item.id || item.key || "unknown",
-			icon: item.icon, // only map if it exists, or remove this if unnecessary
-		}));
+	function mapToMultiSelectOptions(
+		items: any[]
+	): Array<MultiselectOption | GroupMultiselectOption> {
+		const transformedOptions: Array<
+			MultiselectOption | GroupMultiselectOption
+		> = [];
+
+		for (let i = 0; i < items.length; i++) {
+			const item = items[i];
+			if (item.options) {
+				const groupedOption: GroupMultiselectOption = {
+					label: item.label,
+					options: item.options.map((it: any) => ({
+						label: it.label,
+						value: it.name,
+					})),
+				};
+				transformedOptions.push(groupedOption);
+			} else {
+				transformedOptions.push({
+					label: item.label,
+					value: item.name,
+				});
+			}
+		}
+
+		return transformedOptions;
 	}
 
 	const transformedOptions = mapToMultiSelectOptions(options);
+
+	const handleMultiSelectChange = (values: any) => {
+		handleOnChange(values);
+	};
 
 	return (
 		<span>
 			{multiple ? (
 				<MultiSelect
-					onValueChange={onChange}
+					onValueChange={handleMultiSelectChange}
 					options={transformedOptions}
 					className={className}
 					placeholder={title || "Select Value"}
