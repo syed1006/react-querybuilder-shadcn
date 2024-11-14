@@ -28,3 +28,5 @@ package-lock.json
 ./yarn.lock
 
 yarn.lock
+
+react-querybuilder-shadcn-*.tgz
