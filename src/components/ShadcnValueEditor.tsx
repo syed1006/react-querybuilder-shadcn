@@ -9,8 +9,9 @@ import { Checkbox } from "./ui/checkbox";
 import { Label } from "./ui/label";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { DateRangePicker } from "./ui/date-picker-with-range";
-import { DatetimePicker } from "./ui/date-time-picker";
 import DateTimePickerPopover from "./ui/date-time-picker-popover";
+import { TimePicker } from "./ui/time-picker";
+import { isValid, parseISO } from "date-fns";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ShadcnValueEditorProps = ValueEditorProps & {
@@ -249,7 +250,26 @@ export const ShadcnValueEditor = (
 		}
 
 		case "time": {
-			return <ValueEditor {...allProps} skipHook />;
+			const timeFormatRegex = /^(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d$/;
+			let dateValue = parseISO(value);
+			if (value && timeFormatRegex.test(value)) {
+				const [hours, minutes, seconds] = value.split(":").map(Number);
+
+				dateValue = new Date();
+				dateValue.setHours(hours, minutes, seconds, 0);
+			}
+
+			return (
+				<TimePicker
+					date={isValid(dateValue) ? dateValue : undefined}
+					className={className}
+					disabled={disabled}
+					setDate={(d) =>
+						handleOnChange(d ? d.toTimeString().split(" ")[0] : "")
+					}
+					{...extraProps}
+				/>
+			);
 		}
 
 		case "number": {

@@ -97,93 +97,109 @@ function DatetimePicker({
 					Footer: () => {
 						const { goToDate } = useNavigation();
 						return (
-							<div>
-								<hr className="mt-2" />
-								<div className="mt-2 -ml-2 -mr-2">
-									<div>
-										<Button
-											variant="ghost"
-											className="w-full justify-between text-gray-700"
-											onClick={() => {
-												const chosenDate = new Date();
-												goToDate(chosenDate);
-												setDate(chosenDate);
-											}}
-										>
-											<div className="flex">
-												<CalendarCheck className="h-5 w-5 mr-2" />
-												Today
+							<tbody>
+								<tr>
+									<td>
+										<hr className="mt-2" />
+										<div className="mt-2 -ml-2 -mr-2">
+											<div>
+												<Button
+													variant="ghost"
+													className="w-full justify-between text-gray-700"
+													onClick={() => {
+														const chosenDate =
+															new Date();
+														goToDate(chosenDate);
+														setDate(chosenDate);
+													}}
+												>
+													<div className="flex">
+														<CalendarCheck className="h-5 w-5 mr-2" />
+														Today
+													</div>
+													<p className="text-sm text-gray-400 font-normal">
+														{format(
+															new Date(),
+															"PPP"
+														)}
+													</p>
+												</Button>
 											</div>
-											<p className="text-sm text-gray-400 font-normal">
-												{format(new Date(), "PPP")}
-											</p>
-										</Button>
-									</div>
-									<div>
-										<Button
-											variant="ghost"
-											className="w-full justify-between text-gray-700"
-											onClick={() => {
-												const chosenDate = new Date();
-												chosenDate.setDate(
-													chosenDate.getDate() + 1
-												);
-												goToDate(chosenDate);
-												setDate(chosenDate);
-											}}
-										>
-											<div className="flex">
-												<CalendarCog className="h-5 w-5 mr-2" />
-												Tomorrow
-											</div>
-											<p className="text-sm text-gray-400 font-normal">
-												{format(
-													new Date(
-														new Date().getTime() +
-															24 * 60 * 60 * 1000
-													),
-													"PPP"
-												)}
-											</p>
-										</Button>
-									</div>
-									<div>
-										<div>
-											<Button
-												variant="ghost"
-												className="w-full justify-between text-gray-700"
-												onClick={() => {
-													const chosenDate =
-														new Date();
-													chosenDate.setDate(
-														chosenDate.getDate() + 7
-													);
-													goToDate(chosenDate);
-													setDate(chosenDate);
-												}}
-											>
-												<div className="flex">
-													<CalendarClock className="h-5 w-5 mr-2" />
-													Next week
-												</div>
-												<p className="text-sm text-gray-400 font-normal">
-													{format(
-														new Date(
-															new Date().getTime() +
-																7 *
+											<div>
+												<Button
+													variant="ghost"
+													className="w-full justify-between text-gray-700"
+													onClick={() => {
+														const chosenDate =
+															new Date();
+														chosenDate.setDate(
+															chosenDate.getDate() +
+																1
+														);
+														goToDate(chosenDate);
+														setDate(chosenDate);
+													}}
+												>
+													<div className="flex">
+														<CalendarCog className="h-5 w-5 mr-2" />
+														Tomorrow
+													</div>
+													<p className="text-sm text-gray-400 font-normal">
+														{format(
+															new Date(
+																new Date().getTime() +
 																	24 *
-																	60 *
-																	60 *
-																	1000
-														),
-														"PPP"
-													)}
-												</p>
-											</Button>
+																		60 *
+																		60 *
+																		1000
+															),
+															"PPP"
+														)}
+													</p>
+												</Button>
+											</div>
+											<div>
+												<div>
+													<Button
+														variant="ghost"
+														className="w-full justify-between text-gray-700"
+														onClick={() => {
+															const chosenDate =
+																new Date();
+															chosenDate.setDate(
+																chosenDate.getDate() +
+																	7
+															);
+															goToDate(
+																chosenDate
+															);
+															setDate(chosenDate);
+														}}
+													>
+														<div className="flex">
+															<CalendarClock className="h-5 w-5 mr-2" />
+															Next week
+														</div>
+														<p className="text-sm text-gray-400 font-normal">
+															{format(
+																new Date(
+																	new Date().getTime() +
+																		7 *
+																			24 *
+																			60 *
+																			60 *
+																			1000
+																),
+																"PPP"
+															)}
+														</p>
+													</Button>
+												</div>
+											</div>
 										</div>
-									</div>
-								</div>
-							</div>
+									</td>
+								</tr>
+							</tbody>
 						);
 					},
 					IconLeft: ({ ...props }) => (

@@ -208,3 +208,11 @@ export function display12HourValue(hours: number) {
 	if (hours % 12 > 9) return `${hours}`;
 	return `0${hours % 12}`;
 }
+
+/**
+ * function to generate unique keys for react
+ * @returns string
+ */
+export function generateUniqueId(): string {
+	return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+}
