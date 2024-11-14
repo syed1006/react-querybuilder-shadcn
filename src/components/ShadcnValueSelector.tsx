@@ -3,13 +3,13 @@ import * as React from "react";
 import type { VersatileSelectorProps } from "react-querybuilder";
 import { useValueSelector } from "react-querybuilder";
 import { toOptions } from "./utils";
-import { Select, SelectContent } from "./ui/select";
+import { Select, SelectContent, SelectTrigger, SelectValue } from "./ui/select";
 import { MultiSelect } from "./ui/multi-select";
 
-export type AntDValueSelectorProps = VersatileSelectorProps &
+export type ShadcnValueSelectorProps = VersatileSelectorProps &
 	Omit<ComponentPropsWithoutRef<typeof Select>, "onChange" | "defaultValue">;
 
-export const AntDValueSelector = ({
+export const ShadcnValueSelector = ({
 	className,
 	handleOnChange,
 	options,
@@ -31,7 +31,7 @@ export const AntDValueSelector = ({
 	fieldData: _fieldData,
 	schema: _schema,
 	...extraProps
-}: AntDValueSelectorProps): React.JSX.Element => {
+}: ShadcnValueSelectorProps): React.JSX.Element => {
 	const { onChange, val } = useValueSelector({
 		handleOnChange,
 		listsAsArrays,
@@ -50,11 +50,15 @@ export const AntDValueSelector = ({
 	const transformedOptions = mapToMultiSelectOptions(options);
 
 	return (
-		<span title={title} className={className}>
+		<span>
 			{multiple ? (
 				<MultiSelect
 					onValueChange={onChange}
 					options={transformedOptions}
+					className={className}
+					placeholder={title || "Select Value"}
+					disabled={disabled}
+					value={val}
 				/>
 			) : (
 				<Select
@@ -63,7 +67,12 @@ export const AntDValueSelector = ({
 					onValueChange={onChange}
 					{...extraProps}
 				>
-					<SelectContent>{toOptions(options)}</SelectContent>
+					<SelectTrigger className="w-auto min-w-20 min-h-6">
+						<SelectValue placeholder={title || "Select Value"} />
+					</SelectTrigger>
+					<SelectContent className={className}>
+						{toOptions(options)}
+					</SelectContent>
 				</Select>
 			)}
 		</span>
