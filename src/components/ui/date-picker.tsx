@@ -11,12 +11,34 @@ import {
 	PopoverTrigger,
 } from "@/components/ui/popover";
 
-export function DatePickerDemo() {
-	const [date, setDate] = React.useState<Date>();
+interface DatePickerProps {
+	date: Date;
+	onChange?: (date: Date | null) => void;
+	className?: string;
+	format?: string;
+	disabled?: boolean;
+	placeholder?: string;
+}
+
+export function DatePicker({
+	date: initialDate,
+	onChange,
+	className,
+	format: dateFormat = "PPP",
+	disabled = false,
+	placeholder,
+}: DatePickerProps) {
+	const [date, setDate] = React.useState<Date>(initialDate);
+
+	const handleDateChange = (date: any) => {
+		const selectedDate = date ? date.toDate() : null;
+		setDate(selectedDate);
+		if (onChange) onChange(selectedDate);
+	};
 
 	return (
 		<Popover>
-			<PopoverTrigger asChild>
+			<PopoverTrigger className={className} disabled={disabled} asChild>
 				<Button
 					variant={"outline"}
 					className={cn(
@@ -25,14 +47,18 @@ export function DatePickerDemo() {
 					)}
 				>
 					<CalendarIcon className="mr-2 h-4 w-4" />
-					{date ? format(date, "PPP") : <span>Pick a date</span>}
+					{date ? (
+						format(date, dateFormat)
+					) : (
+						<span>{placeholder || "Pick a date"}</span>
+					)}
 				</Button>
 			</PopoverTrigger>
 			<PopoverContent className="w-auto p-0">
 				<Calendar
 					mode="single"
 					selected={date}
-					onSelect={setDate}
+					onSelect={handleDateChange}
 					initialFocus
 				/>
 			</PopoverContent>
