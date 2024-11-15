@@ -11,7 +11,7 @@ import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { DateRangePicker } from "./ui/date-picker-with-range";
 import DateTimePickerPopover from "./ui/date-time-picker-popover";
 import { TimePicker } from "./ui/time-picker";
-import { isValid, parseISO, format, parse } from "date-fns";
+import { isValid, parseISO, format, parse, isMatch } from "date-fns";
 import { DATE_FORMAT, DATE_TIME_FORMAT, ONE, ZERO } from "@/constants";
 import { Components, Operators } from "@/types";
 
@@ -73,8 +73,20 @@ export const ShadcnValueEditor = (
 				if (inputTypeCoerced === Components.TIME) {
 					const selectedValue = value
 						? Array.isArray(value)
-							? parse(value[ZERO], DATE_FORMAT, new Date())
-							: parse(value, DATE_FORMAT, new Date())
+							? isMatch(value[ZERO], DATE_FORMAT)
+								? parse(value[ZERO], DATE_FORMAT, new Date())
+								: parse(
+										format(value[ZERO], DATE_FORMAT),
+										DATE_FORMAT,
+										new Date()
+								  )
+							: isMatch(value, DATE_FORMAT)
+							? parse(value, DATE_FORMAT, new Date())
+							: parse(
+									format(value, DATE_FORMAT),
+									DATE_FORMAT,
+									new Date()
+							  )
 						: new Date();
 					return (
 						<DatePicker
@@ -202,8 +214,16 @@ export const ShadcnValueEditor = (
 		case Components.DATE:
 			const selectedValue = value
 				? Array.isArray(value)
-					? parse(value[ZERO], DATE_FORMAT, new Date())
-					: parse(value, DATE_FORMAT, new Date())
+					? isMatch(value[ZERO], DATE_FORMAT)
+						? parse(value[ZERO], DATE_FORMAT, new Date())
+						: parse(
+								format(value[ZERO], DATE_FORMAT),
+								DATE_FORMAT,
+								new Date()
+						  )
+					: isMatch(value, DATE_FORMAT)
+					? parse(value, DATE_FORMAT, new Date())
+					: parse(format(value, DATE_FORMAT), DATE_FORMAT, new Date())
 				: new Date();
 
 			return (
@@ -222,7 +242,7 @@ export const ShadcnValueEditor = (
 			) {
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				const dateArr = valueAsArray
-					? [new Date(valueAsArray[0]), new Date(valueAsArray[0])]
+					? [new Date(valueAsArray[0]), new Date(valueAsArray[1])]
 					: [new Date(), new Date()];
 				return (
 					<DateRangePicker
@@ -246,8 +266,20 @@ export const ShadcnValueEditor = (
 
 			const selectedValue = value
 				? Array.isArray(value)
-					? parse(value[0], DATE_TIME_FORMAT, new Date())
-					: parse(value, DATE_TIME_FORMAT, new Date())
+					? isMatch(value[ZERO], DATE_TIME_FORMAT)
+						? parse(value[ZERO], DATE_TIME_FORMAT, new Date())
+						: parse(
+								format(value[ZERO], DATE_TIME_FORMAT),
+								DATE_TIME_FORMAT,
+								new Date()
+						  )
+					: isMatch(value, DATE_TIME_FORMAT)
+					? parse(value, DATE_TIME_FORMAT, new Date())
+					: parse(
+							format(value, DATE_TIME_FORMAT),
+							DATE_TIME_FORMAT,
+							new Date()
+					  )
 				: new Date();
 
 			return (
