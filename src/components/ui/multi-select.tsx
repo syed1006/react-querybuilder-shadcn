@@ -252,10 +252,10 @@ export const MultiSelect = React.forwardRef<
 								<div className="flex flex-wrap items-center">
 									{selectedValues
 										.slice(0, maxCount)
-										.map((value) => {
+										.map((value, idx) => {
 											return (
 												<Badge
-													key={value}
+													key={`${value}-${idx}`}
 													className={cn(
 														isAnimating
 															? "animate-bounce"
@@ -367,36 +367,40 @@ export const MultiSelect = React.forwardRef<
 								</CommandItem>
 								{options.map((option) => {
 									if (isGroupOption(option)) {
-										return option.options.map((opt) => {
-											const isSelected =
-												selectedValues.includes(
-													opt.value
-												);
-											return (
-												<CommandItem
-													key={opt.value}
-													onSelect={() =>
-														toggleOption(opt.value)
-													}
-													className="cursor-pointer"
-												>
-													<div
-														className={cn(
-															"mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
-															isSelected
-																? "bg-primary text-primary-foreground"
-																: "opacity-50 [&_svg]:invisible"
-														)}
+										return option.options.map(
+											(opt, idx) => {
+												const isSelected =
+													selectedValues.includes(
+														opt.value
+													);
+												return (
+													<CommandItem
+														key={`${opt.value}-${idx}`}
+														onSelect={() =>
+															toggleOption(
+																opt.value
+															)
+														}
+														className="cursor-pointer"
 													>
-														<CheckIcon className="h-4 w-4" />
-													</div>
-													{opt.icon && (
-														<opt.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-													)}
-													<span>{opt.label}</span>
-												</CommandItem>
-											);
-										});
+														<div
+															className={cn(
+																"mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
+																isSelected
+																	? "bg-primary text-primary-foreground"
+																	: "opacity-50 [&_svg]:invisible"
+															)}
+														>
+															<CheckIcon className="h-4 w-4" />
+														</div>
+														{opt.icon && (
+															<opt.icon className="mr-2 h-4 w-4 text-muted-foreground" />
+														)}
+														<span>{opt.label}</span>
+													</CommandItem>
+												);
+											}
+										);
 									}
 									const isSelected = selectedValues.includes(
 										option.value

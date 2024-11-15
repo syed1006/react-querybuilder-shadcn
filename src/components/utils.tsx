@@ -6,21 +6,15 @@ import { generateUniqueId } from "@/lib/utils";
 
 export { isOptionGroupArray };
 
-export const toOptions = (arr?: OptionList): React.JSX.Element[] | null =>
+export const ToOptions = (arr?: OptionList): React.JSX.Element[] | null =>
 	isOptionGroupArray(arr)
 		? arr.map((og) => {
-				const groupId = React.useMemo(
-					() => `${og.label}-${generateUniqueId()}`,
-					[]
-				);
+				const groupId = `${og.label}-${generateUniqueId()}`;
 				return (
 					<SelectGroup key={groupId}>
 						<SelectLabel>{og.label}</SelectLabel>
 						{og.options.map((opt) => {
-							const itemId = React.useMemo(
-								() => `${opt.name}-${generateUniqueId()}`,
-								[opt.name]
-							);
+							const itemId = `${opt.name}-${generateUniqueId()}`;
 							return (
 								<>
 									{opt.name && (

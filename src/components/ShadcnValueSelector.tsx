@@ -2,7 +2,7 @@ import type { ComponentPropsWithoutRef } from "react";
 import * as React from "react";
 import type { VersatileSelectorProps } from "react-querybuilder";
 import { useValueSelector } from "react-querybuilder";
-import { toOptions } from "./utils";
+import { ToOptions } from "./utils";
 import { Select, SelectContent, SelectTrigger, SelectValue } from "./ui/select";
 import {
 	GroupMultiselectOption,
@@ -100,7 +100,7 @@ export const ShadcnValueSelector = ({
 						<SelectValue placeholder={title || "Select Value"} />
 					</SelectTrigger>
 					<SelectContent className={className}>
-						{toOptions(options)}
+						{ToOptions(options)}
 					</SelectContent>
 				</Select>
 			)}

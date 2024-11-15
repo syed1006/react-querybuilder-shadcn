@@ -58,8 +58,6 @@ export const ShadcnValueEditor = (
 		return null;
 	}
 
-	console.log(valueAsArray);
-
 	const placeHolderText = fieldData?.placeholder ?? "";
 	const inputTypeCoerced = [
 		Operators.IN as string,
