@@ -11,7 +11,9 @@ import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { DateRangePicker } from "./ui/date-picker-with-range";
 import DateTimePickerPopover from "./ui/date-time-picker-popover";
 import { TimePicker } from "./ui/time-picker";
-import { isValid, parseISO } from "date-fns";
+import { isValid, parseISO, format, parse } from "date-fns";
+import { DATE_FORMAT, DATE_TIME_FORMAT, ONE, ZERO } from "@/constants";
+import { Components, Operators } from "@/types";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ShadcnValueEditorProps = ValueEditorProps & {
@@ -46,40 +48,46 @@ export const ShadcnValueEditor = (
 	const { valueAsArray, multiValueHandler, valueListItemClassName } =
 		useValueEditor(allProps);
 
-	if (operator === "null" || operator === "notNull") {
+	if (operator === Operators.NULL || operator === Operators.NOT_NULL) {
 		return null;
 	}
 
 	const placeHolderText = fieldData?.placeholder ?? "";
-	const inputTypeCoerced = ["in", "notIn"].includes(operator)
-		? "text"
-		: inputType || "text";
+	const inputTypeCoerced = [
+		Operators.IN as string,
+		Operators.NOT_IN as string,
+	].includes(operator)
+		? Components.TEXT
+		: inputType || Components.TEXT;
 
 	if (
-		(operator === "between" || operator === "notBetween") &&
-		(type === "select" || type === "text") &&
+		(operator === Operators.BETWEEN ||
+			operator === Operators.NOT_BETWEEN) &&
+		(type === Components.SELECT || type === Components.TEXT) &&
 		// Date ranges are handled differently in AntD--see below
-		inputTypeCoerced !== "date" &&
-		inputTypeCoerced !== "datetime-local"
+		inputTypeCoerced !== Components.DATE &&
+		inputTypeCoerced !== Components.DATETIME_LOCAL
 	) {
-		if (type === "text") {
+		if (type === Components.TEXT) {
 			const editors = ["from", "to"].map((key, i) => {
-				if (inputTypeCoerced === "time") {
+				if (inputTypeCoerced === Components.TIME) {
 					const selectedValue = value
 						? Array.isArray(value)
-							? new Date(value[0])
-							: new Date(value)
+							? parse(value[ZERO], DATE_FORMAT, new Date())
+							: parse(value, DATE_FORMAT, new Date())
 						: new Date();
 					return (
 						<DatePicker
 							date={selectedValue}
-							onChange={(v) => handleOnChange(v?.toISOString())}
+							onChange={(v) =>
+								handleOnChange(format(v, DATE_FORMAT))
+							}
 							disabled={disabled}
 							className={className}
 							placeholder={placeHolderText}
 						/>
 					);
-				} else if (inputTypeCoerced === "number") {
+				} else if (inputTypeCoerced === Components.NUMBER) {
 					return (
 						<Input
 							type="number"
@@ -110,9 +118,9 @@ export const ShadcnValueEditor = (
 			});
 			return (
 				<span data-testid={testID} className={className} title={title}>
-					{editors[0]}
+					{editors[ZERO]}
 					{separator}
-					{editors[1]}
+					{editors[ONE]}
 				</span>
 			);
 		}
@@ -121,11 +129,11 @@ export const ShadcnValueEditor = (
 	}
 
 	switch (type) {
-		case "select":
-		case "multiselect":
+		case Components.SELECT:
+		case Components.MULTISELECT:
 			return <ValueEditor {...allProps} skipHook />;
 
-		case "textarea":
+		case Components.TEXTAREA:
 			return (
 				<Textarea
 					value={value as string}
@@ -138,7 +146,7 @@ export const ShadcnValueEditor = (
 				/>
 			);
 
-		case "switch":
+		case Components.SWITCH:
 			return (
 				<Switch
 					checked={value as boolean}
@@ -150,7 +158,7 @@ export const ShadcnValueEditor = (
 				/>
 			);
 
-		case "checkbox":
+		case Components.CHECKBOX:
 			return (
 				<span title={title} className={className}>
 					<Checkbox
@@ -163,7 +171,7 @@ export const ShadcnValueEditor = (
 				</span>
 			);
 
-		case "radio":
+		case Components.RADIO:
 			return (
 				<RadioGroup
 					value={value as string}
@@ -191,23 +199,27 @@ export const ShadcnValueEditor = (
 	}
 
 	switch (inputTypeCoerced) {
-		case "date":
+		case Components.DATE:
 			const selectedValue = value
 				? Array.isArray(value)
-					? new Date(value[0])
-					: new Date(value)
+					? parse(value[ZERO], DATE_FORMAT, new Date())
+					: parse(value, DATE_FORMAT, new Date())
 				: new Date();
+
 			return (
 				<DatePicker
 					date={selectedValue}
-					onChange={(v) => handleOnChange(v?.toISOString())}
+					onChange={(v) => handleOnChange(format(v, DATE_FORMAT))}
 					disabled={disabled}
 					className={className}
 					placeholder={placeHolderText}
 				/>
 			);
-		case "datetime-local": {
-			if (operator === "between" || operator === "notBetween") {
+		case Components.DATETIME_LOCAL: {
+			if (
+				operator === Operators.BETWEEN ||
+				operator === Operators.NOT_BETWEEN
+			) {
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				const dateArr = valueAsArray
 					? [new Date(valueAsArray[0]), new Date(valueAsArray[0])]
@@ -234,14 +246,14 @@ export const ShadcnValueEditor = (
 
 			const selectedValue = value
 				? Array.isArray(value)
-					? new Date(value[0])
-					: new Date(value)
+					? parse(value[0], DATE_TIME_FORMAT, new Date())
+					: parse(value, DATE_TIME_FORMAT, new Date())
 				: new Date();
 
 			return (
 				<DateTimePickerPopover
 					selected={selectedValue}
-					setDate={(v) => handleOnChange(v?.toISOString())}
+					setDate={(v) => handleOnChange(format(v, DATE_TIME_FORMAT))}
 					disabled={disabled}
 					className={className}
 					placeholder={placeHolderText}
@@ -249,7 +261,7 @@ export const ShadcnValueEditor = (
 			);
 		}
 
-		case "time": {
+		case Components.TIME: {
 			const timeFormatRegex = /^(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d$/;
 			let dateValue = parseISO(value);
 			if (value && timeFormatRegex.test(value)) {
@@ -272,7 +284,7 @@ export const ShadcnValueEditor = (
 			);
 		}
 
-		case "number": {
+		case Components.NUMBER: {
 			return (
 				<Input
 					type="number"

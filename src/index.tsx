@@ -14,6 +14,8 @@ import "./index.min.css";
 
 export * from "./components/ShadcnValueSelector";
 export * from "./components/ShadcnValueEditor";
+export * from "./types";
+export * from "./constants";
 
 export const shadcnControlElements: ControlElementsProp<FullField, string> = {
 	valueSelector: ShadcnValueSelector,

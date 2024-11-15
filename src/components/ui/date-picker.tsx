@@ -13,7 +13,7 @@ import {
 
 interface DatePickerProps {
 	date: Date;
-	onChange?: (date: Date | null) => void;
+	onChange?: (date: Date) => void;
 	className?: string;
 	format?: string;
 	disabled?: boolean;
