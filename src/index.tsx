@@ -14,6 +14,7 @@ import "./index.min.css";
 import { ShadcnShiftActions } from "./components/ShadcnShiftActions";
 import { ShadcnNotToggle } from "./components/ShadcnNotToggle";
 import { ShadcnDragHandle } from "./components/ShadcnDragHandle";
+import { ShadcnActionElement } from "./components/ShadcnActionElements";
 
 export * from "./types";
 export * from "./constants";
@@ -22,6 +23,7 @@ export * from "./components/ShadcnValueEditor";
 export * from "./components/ShadcnShiftActions";
 export * from "./components/ShadcnNotToggle";
 export * from "./components/ShadcnDragHandle";
+export * from "./components/ShadcnActionElements";
 
 export const shadcnControlElements: ControlElementsProp<FullField, string> = {
 	valueSelector: ShadcnValueSelector,
@@ -29,6 +31,7 @@ export const shadcnControlElements: ControlElementsProp<FullField, string> = {
 	shiftActions: ShadcnShiftActions,
 	notToggle: ShadcnNotToggle,
 	dragHandle: ShadcnDragHandle,
+	actionElement: ShadcnActionElement,
 };
 
 export const QueryBuilderShadcn: QueryBuilderContextProvider =
