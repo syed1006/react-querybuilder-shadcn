@@ -21,6 +21,7 @@ function App() {
 					onQueryChange={setQuery}
 					fields={fields}
 					showShiftActions
+					showNotToggle
 				/>
 			</QueryBuilderShadcn>
 			<code>{formatQuery(query, "sql")}</code>
@@ -30,6 +31,7 @@ function App() {
 					onQueryChange={setQuery2}
 					fields={fields}
 					showShiftActions
+					showNotToggle
 				/>
 			</QueryBuilderAntD>
 			<code>{formatQuery(query2, "sql")}</code>
