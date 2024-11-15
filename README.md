@@ -1,7 +1,5 @@
 # Shadcn Components for React-QueryBuilder
 
-## A library of Shadcn-based components for seamlessly integrating with [React-QueryBuilder](https://react-querybuilder.js.org/). Inspired by the excellent work in [react-querybuilder/antd](https://github.com/react-querybuilder/react-querybuilder/tree/main/packages/antd), this library provides a customizable and aesthetic interface using Shadcn UI principles.
-
 ## Acknowledgments
 
 This project stands on the shoulders of giants. A huge thank you to the [React-QueryBuilder](https://react-querybuilder.js.org/) team for their incredible tool that simplifies query building. Your dedication to open source has made this library possible.
