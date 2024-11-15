@@ -24,8 +24,8 @@ export function TimePicker({
 	const secondRef = React.useRef<HTMLInputElement>(null);
 
 	return (
-		<div className="flex items-end gap-2 ">
-			<div className={cn("grid gap-1 text-center", className)}>
+		<div className={cn("flex items-end gap-2", className)}>
+			<div className={"grid gap-1 text-center"}>
 				<TimePickerInput
 					picker="hours"
 					date={date}
@@ -65,7 +65,7 @@ export function TimePicker({
 					Seconds
 				</Label>
 			</div>
-			<div className="flex h-10 items-center">
+			<div className="flex h-16 items-center mr-1">
 				<Clock className="ml-2 h-4 w-4" />
 			</div>
 		</div>

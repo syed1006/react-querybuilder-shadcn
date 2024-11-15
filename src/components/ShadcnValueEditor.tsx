@@ -11,8 +11,14 @@ import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { DateRangePicker } from "./ui/date-picker-with-range";
 import DateTimePickerPopover from "./ui/date-time-picker-popover";
 import { TimePicker } from "./ui/time-picker";
-import { isValid, parseISO, format, parse, isMatch } from "date-fns";
-import { DATE_FORMAT, DATE_TIME_FORMAT, ONE, ZERO } from "@/constants";
+import { format, parse, isMatch } from "date-fns";
+import {
+	DATE_FORMAT,
+	DATE_TIME_FORMAT,
+	ONE,
+	TIME_FORMAT,
+	ZERO,
+} from "@/constants";
 import { Components, Operators } from "@/types";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -52,6 +58,8 @@ export const ShadcnValueEditor = (
 		return null;
 	}
 
+	console.log(valueAsArray);
+
 	const placeHolderText = fieldData?.placeholder ?? "";
 	const inputTypeCoerced = [
 		Operators.IN as string,
@@ -71,32 +79,27 @@ export const ShadcnValueEditor = (
 		if (type === Components.TEXT) {
 			const editors = ["from", "to"].map((key, i) => {
 				if (inputTypeCoerced === Components.TIME) {
-					const selectedValue = value
-						? Array.isArray(value)
-							? isMatch(value[ZERO], DATE_FORMAT)
-								? parse(value[ZERO], DATE_FORMAT, new Date())
-								: parse(
-										format(value[ZERO], DATE_FORMAT),
-										DATE_FORMAT,
-										new Date()
-								  )
-							: isMatch(value, DATE_FORMAT)
-							? parse(value, DATE_FORMAT, new Date())
+					const selectedValue = valueAsArray[i]
+						? isMatch(valueAsArray[i], TIME_FORMAT)
+							? parse(valueAsArray[i], TIME_FORMAT, new Date())
 							: parse(
-									format(value, DATE_FORMAT),
-									DATE_FORMAT,
+									format(valueAsArray[i], TIME_FORMAT),
+									TIME_FORMAT,
 									new Date()
 							  )
 						: new Date();
 					return (
-						<DatePicker
+						<TimePicker
 							date={selectedValue}
-							onChange={(v) =>
-								handleOnChange(format(v, DATE_FORMAT))
-							}
-							disabled={disabled}
 							className={className}
-							placeholder={placeHolderText}
+							disabled={disabled}
+							setDate={(d) =>
+								multiValueHandler(
+									d ? format(d, TIME_FORMAT) : "",
+									i
+								)
+							}
+							{...extraProps}
 						/>
 					);
 				} else if (inputTypeCoerced === Components.NUMBER) {
@@ -129,7 +132,11 @@ export const ShadcnValueEditor = (
 				);
 			});
 			return (
-				<span data-testid={testID} className={className} title={title}>
+				<span
+					data-testid={testID}
+					className={`flex ${className}`}
+					title={title}
+				>
 					{editors[ZERO]}
 					{separator}
 					{editors[ONE]}
@@ -255,7 +262,7 @@ export const ShadcnValueEditor = (
 						initialDateFrom={dateArr[0]}
 						initialDateTo={dateArr[1]}
 						align="start"
-						locale="en-GB"
+						locale="en-US"
 						showCompare={false}
 						disabled={disabled}
 						className={className}
@@ -294,22 +301,39 @@ export const ShadcnValueEditor = (
 		}
 
 		case Components.TIME: {
-			const timeFormatRegex = /^(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d$/;
-			let dateValue = parseISO(value);
-			if (value && timeFormatRegex.test(value)) {
-				const [hours, minutes, seconds] = value.split(":").map(Number);
-
-				dateValue = new Date();
-				dateValue.setHours(hours, minutes, seconds, 0);
+			let convertedValue = value;
+			if (
+				convertedValue &&
+				!Array.isArray(convertedValue) &&
+				convertedValue.includes(",")
+			) {
+				convertedValue = convertedValue.split(",");
 			}
+			const selectedValue = convertedValue
+				? Array.isArray(convertedValue)
+					? isMatch(convertedValue[ZERO], TIME_FORMAT)
+						? parse(convertedValue[ZERO], TIME_FORMAT, new Date())
+						: parse(
+								format(convertedValue[ZERO], TIME_FORMAT),
+								TIME_FORMAT,
+								new Date()
+						  )
+					: isMatch(convertedValue, TIME_FORMAT)
+					? parse(convertedValue, TIME_FORMAT, new Date())
+					: parse(
+							format(convertedValue, TIME_FORMAT),
+							TIME_FORMAT,
+							new Date()
+					  )
+				: new Date();
 
 			return (
 				<TimePicker
-					date={isValid(dateValue) ? dateValue : undefined}
+					date={selectedValue}
 					className={className}
 					disabled={disabled}
 					setDate={(d) =>
-						handleOnChange(d ? d.toTimeString().split(" ")[0] : "")
+						handleOnChange(d ? format(d, TIME_FORMAT) : "")
 					}
 					{...extraProps}
 				/>
