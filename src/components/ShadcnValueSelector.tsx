@@ -72,7 +72,10 @@ export const ShadcnValueSelector = ({
 		return transformedOptions;
 	}
 
-	const transformedOptions = mapToMultiSelectOptions(options);
+	const transformedOptions = React.useMemo(
+		() => mapToMultiSelectOptions(options),
+		[options]
+	);
 
 	const handleMultiSelectChange = (values: any) => {
 		handleOnChange(values);
@@ -100,7 +103,7 @@ export const ShadcnValueSelector = ({
 						<SelectValue placeholder={title || "Select Value"} />
 					</SelectTrigger>
 					<SelectContent className={className}>
-						{ToOptions(options)}
+						{ToOptions({ options })}
 					</SelectContent>
 				</Select>
 			)}
