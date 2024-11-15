@@ -20,6 +20,7 @@ function App() {
 					query={query}
 					onQueryChange={setQuery}
 					fields={fields}
+					showShiftActions
 				/>
 			</QueryBuilderShadcn>
 			<code>{formatQuery(query, "sql")}</code>
@@ -28,6 +29,7 @@ function App() {
 					query={query2}
 					onQueryChange={setQuery2}
 					fields={fields}
+					showShiftActions
 				/>
 			</QueryBuilderAntD>
 			<code>{formatQuery(query2, "sql")}</code>
