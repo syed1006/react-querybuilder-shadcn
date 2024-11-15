@@ -1,12 +1,6 @@
-Here’s a **README** template for your library:
-
----
-
 # Shadcn Components for React-QueryBuilder
 
-A library of Shadcn-based components for seamlessly integrating with [React-QueryBuilder](https://react-querybuilder.js.org/). Inspired by the excellent work in [react-querybuilder/antd](https://github.com/react-querybuilder/react-querybuilder/tree/main/packages/antd), this library provides a customizable and aesthetic interface using Shadcn UI principles.
-
----
+## A library of Shadcn-based components for seamlessly integrating with [React-QueryBuilder](https://react-querybuilder.js.org/). Inspired by the excellent work in [react-querybuilder/antd](https://github.com/react-querybuilder/react-querybuilder/tree/main/packages/antd), this library provides a customizable and aesthetic interface using Shadcn UI principles.
 
 ## Acknowledgments
 
@@ -89,6 +83,16 @@ export function App() {
 	);
 }
 ```
+
+## Styles
+
+This will add styles with react query layouts
+
+```tsx
+import "react-querybuilder-shadcn/dist/style.css";
+```
+
+## Exports
 
 `QueryBuilderShadcn` is a React context provider that assigns the following props to all descendant `QueryBuilder` elements. The props can be overridden on the `QueryBuilder` or used directly without the context provider.
 
